@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<ui:composition template="../template/template.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="eventTextId" value="#{query.eventTextId}" />
+		<f:viewAction action="#{query.queryDatabaseEventTextId}"/>
+	</f:metadata>
+
+	<ui:define name="script">
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw6MYzh9A5OP3plRY0BmxxjIrQ7UCMaOQ&amp;sensor=true"></script>
+	</ui:define>
+	<ui:define name="title">#{msg['eventTitle']}#{query.eventRecord.eventTextId}</ui:define>
+	<ui:define name="content">
+
+		<!-- Carousel================================================== -->
+	    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+	      <!-- Indicators -->
+	      <ol class="carousel-indicators">
+	        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+	        <li data-target="#myCarousel" data-slide-to="1"></li>
+	        <li data-target="#myCarousel" data-slide-to="2"></li>
+	      </ol>
+	      <div class="carousel-inner">
+
+			<ui:param name="first" value="0"/>
+			<ui:repeat var="o" value="#{query.eventRecord.imageLinks}" varStatus="status">
+
+			    <ui:fragment rendered="#{status.index ne first}">
+			
+					<div class="item" style="background-image: url('#{o}');">
+					  <div class="container">
+<!-- 					    <div class="carousel-caption"> -->
+<!-- 					      <h1>Father-Child Run</h1> -->
+<!-- 					      <p>Enjoyable run with daddy!</p> -->
+<!-- 					    </div> -->
+					  </div>
+					</div>
+							
+			    </ui:fragment>
+			 	<ui:fragment rendered="#{status.index eq first}">
+			
+					<div class="item active" style="background-image: url('#{o}');">
+					  <div class="container">
+<!-- 					    <div class="carousel-caption"> -->
+<!-- 					      <h1>Father-Child Run</h1> -->
+<!-- 					      <p>Enjoyable run with daddy!</p> -->
+<!-- 					    </div> -->
+					  </div>
+					</div>
+							
+			    </ui:fragment>
+			 
+			</ui:repeat>
+	      </div>
+	      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+	      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+	    </div><!-- /.carousel -->
+	    
+	    <div class="black-bar-top col-sm-12 col-md-12">
+	    	<div class="bar-text bar-dateTime col-sm-9 col-md-9">#{query.eventRecord.startDate} - #{query.eventRecord.endDate}</div>
+	    	<div class="bar-text bar-accessLvl col-sm-3 col-md-3">Public</div>
+	    </div>
+
+		<h:panelGroup rendered="#{query.eventRecord ne null}" styleClass="col-sm-12 col-md-12 maximum-space">
+
+			<div class="event-data col-sm-12 col-md-12">
+				<h1>#{query.eventRecord.name}</h1>
+			</div>
+			
+			<div class="event-data col-sm-6 col-md-6">
+				<div>
+					<img src="/image/icons/png/icon_location.png"></img>
+					#{msg['eventAddress']}: #{query.eventRecord.eventLocation}
+				</div>
+				<div>
+					<img src="/image/icons/png/icon_eventdescription.png"></img>
+					#{msg['eventDetails']}: #{query.eventRecord.description}
+				</div>
+				<div>
+					<img src="/image/icons/png/icon_eventprice.png"></img>
+					#{msg['eventCost']}:#{query.eventRecord.cost}
+				</div>
+				<div>
+					<img src="/image/icons/png/icon_categories.png"></img>
+					#{msg['eventTags']}: Marathons
+				</div>
+				<div>
+					<img src="/image/icons/png/icon_link.png"></img>
+					<a href="http://#{query.eventRecord.url}" >http://#{query.eventRecord.url}</a>
+				</div>
+				
+			</div>
+			<div class="event-data col-sm-4 col-md-4">
+			
+				<form action="/dynamic/imageUpload" class="" id="imgUpload">
+					<h:commandButton type="submit" value="RSVP" styleClass="btn btn-primary" action="#{userForm.submit}"/>
+				</form>
+				
+				<h2>Host Information</h2>
+				<img class="img-responsive" src="http://livinginsingaporetoday.com/wp-content/uploads/2008/10/safra.gif"></img>
+				#{msg['eventHost']}:#{query.eventRecord.ownerUserId}<br/>
+				<div>
+<!-- 					<img src="http://placehold.it/30x30"></img> -->
+					<a href="/event/#{query.eventRecord.eventTextId}" >pinder.com/event/#{query.eventRecord.eventTextId}</a>
+				</div>
+				
+<!-- 				<div class="row"> -->
+<!-- 					#{msg['eventRsvp']}: -->
+<!-- 					<ui:repeat value="#{query.eventRecord.guestListID}" var="eaGuest"> -->
+<!-- 						<div>#{eaGuest}</div> -->
+<!-- 					</ui:repeat> -->
+<!-- 				</div> -->
+			</div>
+
+			<h:form styleClass="maximum-space">
+				<h:panelGrid id="createeFormPanel" styleClass="col-md-12 col-sm-12 maximum-space">
+					<m:map width="100%" height="500px" autoReshape="true" latitude="#{query.eventRecord.eventLocationLat}" longitude="#{query.eventRecord.eventLocationLng}"  jsVariable="gmapsMap">
+						<m:marker showInformationEvent="click"> 
+							<m:htmlInformationWindow htmlText="#{query.eventRecord.eventLocation}"/>
+						</m:marker>
+					</m:map>
+				</h:panelGrid>
+			</h:form>
+			<script>
+				function variableWait(executeFunction){
+				    if(typeof gmapsMap !== "undefined"){
+				    	executeFunction();
+				    }
+				    else{
+				        setTimeout(function(){
+				        	variableWait(executeFunction);
+				        },250);
+				    }
+				}
+				variableWait(function() {
+						var mapOptions = {
+								disableDefaultUI: true, // a way to quickly hide all controls
+								mapTypeId: google.maps.MapTypeId.ROADMAP,
+								scrollwheel: false
+						}
+						gmapsMap.setOptions(mapOptions);
+					}
+				);
+			</script>
+			
+<!-- 			<div class="event-html col-sm-12 col-md-12"> -->
+<!-- 				<div> -->
+<!-- 					<img src="http://placehold.it/30x30"></img> -->
+<!-- 					#{query.eventRecord.htmlBox} -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			
+		</h:panelGroup>
+		<h:panelGroup rendered="#{query.eventRecord eq null}" styleClass="col-sm-10 col-md-10 col-md-offset-1 main">
+			<h1>#{msg['eventErrorMsg']}</h1>
+		</h:panelGroup>
+	</ui:define>
+	
+</ui:composition>
+</html>

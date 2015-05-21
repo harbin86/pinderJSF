@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:form>
+<h:dataTable value="#{todoBean.todos}" var="todo">
+  <h:column>
+    <f:facet name="header">Title</f:facet>
+    #{todo.title}
+  </h:column>
+  <h:column>
+    <f:facet name="header">Description</f:facet>
+    #{todo.description}
+  </h:column>
+  <h:column>
+    <a href="edit.faces?tid=#{todo.id}">Edit</a>
+  </h:column>
+</h:dataTable>
+<center>
+  <h:commandButton action="create"
+            value="Create New Todo" type="submit"/>
+</center>
+</h:form>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/">
+
+<ui:composition template="../template/template.xhtml">
+
+	<f:metadata>
+		<f:viewAction action="#{query.queryAll}"/>
+	</f:metadata>
+
+	<ui:define name="title">Pinder: Category-Promotion</ui:define>
+	<ui:define name="content">
+		<div class="col-sm-3 col-md-2 sidebar">
+			<ul class="nav nav-sidebar">
+				<li><a href="category-people.xhtml">#{msg['catNavPeople']}</a></li>
+				<li><a href="category-event.xhtml">#{msg['catNavEvent']}</a></li>
+				<li class="active"><a href="#">#{msg['catNavPromotion']}</a></li>
+			</ul>
+		</div>
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<div class="page-header">
+				<h3>Promotions</h3>
+			</div>
+			<ui:repeat value="#{query.queryResultEventRecord}" var="eaEvent">
+				<div class="thumbnail">
+					<div class="row">
+						<div class="col-sm-3 col-md-3">
+							<img class="img-responsive" src="http://maps.googleapis.com/maps/api/staticmap?center=#{eaEvent.eventLocationLatLng}&amp;zoom=15&amp;markers=#{eaEvent.eventLocationLatLng}&amp;size=300x250&amp;sensor=false"/>
+<!-- 							<img class="img-responsive" src="http://placehold.it/300x250" /> -->
+						</div>
+
+						<div class="col-sm-9 col-md-9">
+							<span class="pull-right"> <a href="#">More Like This</a></span>
+							<h4><a href="/event/#{eaEvent.eventTextId}">#{eaEvent.name}</a></h4>
+							
+							<h5>#{eaEvent.description}</h5>
+							
+							<div>#{msg['eventAddress']}: #{eaEvent.eventLocation}</div>
+							
+							<div class="col-sm-12 col-md-12">
+								<div class="row">
+									#{msg['eventDateTime']}: <i>#{eaEvent.startDate}</i> #{msg['eventDateTimeTo']} <i>#{eaEvent.endDate}</i>
+
+								</div>
+							</div>
+							<div>#{msg['eventType']}: Event</div>
+							<div class="col-sm-12 col-md-12">
+								<div class ="row">
+									#{msg['eventTags']}:
+									<ui:repeat value="#{eaEvent.tags}" var="eaTag">
+										<div class="label label-primary">#{eaTag}</div>
+									</ui:repeat>
+								</div>
+							</div>
+							<div>#{msg['eventCost']}: #{eaEvent.cost}</div>
+							<div class="col-sm-12 col-md-12">
+								<div class="row">
+									#{msg['eventRsvp']}:
+									<ui:repeat value="#{eaEvent.guestListID}" var="eaGuest">
+										<div>#{eaGuest}</div>
+									</ui:repeat>
+								</div>
+							</div>
+							<div>#{msg['catEventPinvents']}: #{eaEvent.creatorID}</div>
+							<div class="mlt"></div>
+						</div>
+
+					</div>
+				</div>
+			</ui:repeat>
+		</div>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.prime.com.tr/ui">
+
+<ui:composition template="../template/template.xhtml">
+
+	<f:metadata>
+		<f:viewAction action="#{query.queryMap}"/>
+	</f:metadata>
+
+	<ui:define name="script" >
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw6MYzh9A5OP3plRY0BmxxjIrQ7UCMaOQ&amp;sensor=true"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"/>
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<!-- 		<link rel="stylesheet" type="text/css" media="screen" href="/css/bootstrap-select.css" /> -->
+<!-- 		<script src="js/bootstrap-select.js"></script> -->
+		<script>
+		
+		/**
+		 * ReplaceAll by Fagner Brack (MIT Licensed)
+		 * Replaces all occurrences of a substring in a string
+		 */
+		String.prototype.replaceAll = function( token, newToken, ignoreCase ) {
+		    var _token;
+		    var str = this + "";
+		    var i = -1;
+
+		    if ( typeof token === "string" ) {
+
+		        if ( ignoreCase ) {
+
+		            _token = token.toLowerCase();
+
+		            while( (
+		                i = str.toLowerCase().indexOf(
+		                    token, i >= 0 ? i + newToken.length : 0
+		                ) ) !== -1
+		            ) {
+		                str = str.substring( 0, i ) +
+		                    newToken +
+		                    str.substring( i + token.length );
+		            }
+
+		        } else {
+		            return this.split( token ).join( newToken );
+		        }
+
+		    }
+		return str;
+		};
+		</script>
+	</ui:define>
+
+	<ui:define name="title">Pinder: Map</ui:define>
+	<ui:define name="content-wrapper">
+		<div class="col-sm-3 col-md-3 sidebar transparent">
+			<h:form styleClass="form-horizontal col-md-12" accept-charset="utf-8">
+				<fieldset>
+
+					<!-- Text input-->
+					<div class="form-group well" id="distance">
+						<label for="distance">Distance of: </label>
+						<h:inputText id="distance"
+							name="distance"
+							label="Between: "
+							pt:required="true"
+							value="#{query.distance}"
+							type="text"
+							styleClass="transparent" size="11"/>
+						<div class="col-md-12">
+							<div id="sliderDistanceRange"></div>
+						</div>
+						<script>
+						$(function() {
+							var distance = $( "#distance>:input:nth-child(2)" ).val().replaceAll("KM", "");
+							$( "#sliderDistanceRange" ).slider({
+								 range: "min",
+								 value: distance,
+								 min: 1,
+								 max: 20,
+								slide: function( event, ui ) {
+									$("#distance>:input:nth-child(2)").val(ui.value+"KM");
+								}
+							});
+							$( "#sliderDistanceRange" ).on( "slidestop", function( event, ui ) {  
+						        delay(function(){
+		                        	$("#j_idt12\\:pinvents").click();
+		                        }, 5000 );
+		                		});
+							
+							$("#j_idt12\\:distance").change(function () { 
+								if (this.value.length > 1) {
+			                        delay(function(){
+			                        	$("#j_idt12\\:pinvents").click();
+			                        }, 5000 );
+			                    }
+							});
+						});
+						</script>
+						<br></br>
+						<label for="address">From: </label>
+						<div class="col-md-12">
+							<div class="input-group" id="location">
+								<h:inputText id="address"
+										name="address"
+										label="#{msg['createeFormAddress']}"
+										pt:placeholder="Type address or click on map"
+										styleClass="form-control"
+										type="text"
+										value="#{query.fromLocation}">
+								</h:inputText>
+								<span class="input-group-addon">
+									<a id="currLoc" title="Current Location" href="#" onclick="getCurrLoc();return false;">
+										<span class="glyphicon glyphicon-map-marker blue"></span>
+									</a>
+								</span>
+							</div>
+							<div id="locationLatLng">
+								<h:inputHidden id="addressLatLng"
+										name="addressLatLng"
+										label="#{msg['createeFormAddress']}"
+										styleClass="form-control col-md-12"
+										type="text"
+										hidden="true"
+										value="#{query.fromLocationCoord}">
+								</h:inputHidden>
+							</div>
+						</div>
+					</div>
+					<script>
+					$('#location>:input:nth-child(1)').on('keyup', function() {
+						var inputElement = this;
+					    if (this.value.length > 1) {
+					        delay(function(){
+					        	codeAddress(inputElement);
+					        }, 1000 );
+					    }
+					});
+					var delay = (function(){
+						  var timer = 0;
+						  return function(callback, ms){
+						    clearTimeout (timer);
+						    timer = setTimeout(callback, ms);
+						  };
+					})();
+					
+					function getCurrLoc() {
+						// Try W3C Geolocation (Preferred)
+						if (navigator.geolocation) {
+							browserSupportFlag = true;
+							navigator.geolocation
+									.getCurrentPosition(
+											function(position) {
+												initialLocation = new google.maps.LatLng(
+														position.coords.latitude,
+														position.coords.longitude);
+												geocodeAndFixMap(initialLocation);
+											},
+											function() {
+												handleNoGeolocation(browserSupportFlag);
+											});
+						} else {
+							browserSupportFlag = false;
+							handleNoGeolocation(browserSupportFlag);
+						}
+
+						function handleNoGeolocation(errorFlag) {
+							alert("Could not find your location, try typing or clicking on Map.");
+						}
+					}
+					
+					</script>
+
+					<!-- Text input-->
+					<div class="form-group well" id="date">
+						<label for="date">Between: </label>
+						<h:inputText id="date"
+							name="date"
+							label="Between: "
+							pt:required="true"
+							value="#{query.dateRange}"
+							type="text"
+							styleClass="transparent" size="17"
+							>
+<!-- 							onchange="submit()" -->
+<!-- 							valueChangeListener="#{query.retrieveStatusInfo}" -->
+						</h:inputText>
+						<div class="col-md-12">
+							<div id="sliderDateRange"></div>
+						</div>
+						<script>
+						$(function() {
+							var dateMinMax = $( "#date>:input:nth-child(2)" ).val().replaceAll("days", "").split(" - ");
+							$( "#sliderDateRange" ).slider({
+								range: true,
+								min: 0,
+								max: 10,
+								values: [ dateMinMax[0], dateMinMax[1] ],
+								slide: function( event, ui ) {
+									$( "#date>:input:nth-child(2)" ).val( ui.values[ 0 ] + " days - " + ui.values[ 1 ] + " days");
+								}
+							});
+							
+							$( "#sliderDateRange" ).on( "slidestop", function( event, ui ) {  
+					                delay(function(){
+			                        	$("#j_idt12\\:pinvents").click();
+			                        }, 5000 );
+			          		});
+							 
+							$("#j_idt12\\:date").change(function () { 
+								if (this.value.length > 1) {
+			                        delay(function(){
+			                        	$("#j_idt12\\:pinvents").click();
+			                        }, 5000 );
+			                    }
+							});
+// 							$( "#date>:input:nth-child(2)" ).val( $( "#sliderDateRange" ).slider( "values", 0 ) +
+// 									" days - " + $( "#sliderDateRange" ).slider( "values", 1 ) + " days" );
+						});
+						</script>
+					</div>
+					
+					<div class="form-group well">
+						<label for="tags">Category: </label>
+						<h:selectOneMenu id="tags"
+							name="tags"
+							label="#{msg['createeFormTags']}"
+							pt:placeholder="#{msg['createeFormTagsPlaceholder']}"
+							pt:required="true" 
+							required="true" 
+							pt:data-role="tagsinput" 
+							styleClass="form-control"
+							value="#{query.category}" 
+							type="text">
+<!-- 						onchange="submit()" valueChangeListener="#{query.retrieveStatusInfo}" -->
+							<f:selectItems value="#{query.tagsValue}" />
+						</h:selectOneMenu>
+					</div>
+
+					<div class="form-group" style="display: none">
+						<h:commandButton type="submit" id="pinvents" value="Filter Pinvents" styleClass="btn btn-primary pull-right" action="#{query.queryMap}"/>
+					</div>
+					
+				</fieldset>
+		</h:form>
+		
+		<ui:repeat value="#{query.queryResultEventRecord}" var="eaEvent">
+			<div class="col-sm-12 col-md-12 thumbnail">
+				<div class="row">
+					<div class="col-sm-12 col-md-12">
+						<span class="pull-right"> <a href="#">More Like This</a></span>
+						<h4><a href="/event/#{eaEvent.eventTextId}">#{eaEvent.name}</a></h4>
+						
+						<h5 class="breakWord">#{eaEvent.description}</h5>
+						
+						<div>#{msg['eventAddress']}: #{eaEvent.eventLocation}</div>
+						
+						<div class="col-sm-12 col-md-12">
+							<div class="row">
+								#{msg['eventDateTime']}: <i>#{eaEvent.startDate}</i> #{msg['eventDateTimeTo']} <i>#{eaEvent.endDate}</i>
+
+							</div>
+						</div>
+						<div>#{msg['eventType']}: Event</div>
+						<div class="col-sm-12 col-md-12">
+							<div class ="row">
+								#{msg['eventTags']}:
+								<div class="label label-primary">#{eaEvent.category}</div>
+							</div>
+						</div>
+						<div>#{msg['eventCost']}: #{eaEvent.cost}</div>
+						<div class="col-sm-12 col-md-12">
+							<div class="row">
+								#{msg['eventRsvp']}:
+								<ui:repeat value="#{eaEvent.guestListID}" var="eaGuest">
+									<div>#{eaGuest}</div>
+								</ui:repeat>
+							</div>
+						</div>
+<!-- 						<div>#{msg['catEventPinvents']}: #{eaEvent.creatorID}</div> -->
+						<div class="mlt"></div>
+					</div>
+
+				</div>
+			</div>
+		</ui:repeat>
+				
+	</div>
+<!-- 		<div id="map-canvas" class="googlemapsfull"></div> -->
+		<h:form styleClass="googlemapsfull" id="form">
+			<m:map height="100%" width="100%" autoReshape="true" enableScrollWheelZoom="true" jsVariable="gmapsMap"
+			latitude="1.3000" longitude="103.8000">
+<!-- 			latitude="#{query.fromLocationCoordLat}" longitude="#{query.fromLocationCoordLng}" -->
+<!-- 				<m:htmlInformationWindow htmlText="#{query.fromLocation}" styleClass="infoBox infoBoxDetails" rendered="#{query.fromLocationCoord != ''}" -->
+<!-- 				latitude="#{query.fromLocationCoordLat}" longitude="#{query.fromLocationCoordLng}"  -->
+<!-- 				jsVariable="infowindow"/> -->
+				<ui:repeat value="#{query.queryResultEventRecord}" var="eaEvent">
+					<m:marker latitude="#{eaEvent.eventLocationLat}" longitude="#{eaEvent.eventLocationLng}" showInformationEvent="click">
+						<m:htmlInformationWindow htmlText="#{eaEvent.infoBox}" styleClass="infoBox infoBoxDetails"/>
+					</m:marker>
+				</ui:repeat>
+			</m:map>
+		</h:form>
+		<script>
+		$("#j_idt12\\:tags").change(function () { 
+		if (this.value.length > 1) {
+            delay(function(){
+            	$("#j_idt12\\:pinvents").click();
+            }, 2000 );
+        }
+		});
+		
+		var geocoder = new google.maps.Geocoder();
+		if(typeof infowindow != 'undefined')
+			var infowindow = new google.maps.InfoWindow({});
+		
+		var mapOptions = {
+			disableDefaultUI: true, // a way to quickly hide all controls
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		
+		
+		function codeAddress(elem) {
+		  var address = elem.value;
+		  geocoder.geocode( { 'address': address}, function(results, status) {
+		    if (status == google.maps.GeocoderStatus.OK) {
+		    	  eventAddress = results[0].formatted_address;
+		    	  // Escape by javascript first then html
+		    	  var htmlInfoWin = results[0].formatted_address
+		    	  +"&lt;br\/&gt;&lt;a href=\&quot;javascript:void(0);\&quot; onclick=\&quot;populateForm(this)\&quot;&gt;Use this address&lt;\/a&gt;";
+		    	fixMap(results[0].geometry.location, results[0].formatted_address, htmlInfoWin);
+		    	
+		    	$('#addressLatLngDiv>:input').val(results[0].geometry.location.lat()+","+results[0].geometry.location.lng());
+		    	
+		    } else {
+		    }
+		  });
+		}
+		
+		function variableWait(executeFunction){
+		    if(typeof gmapsMap !== "undefined"){
+		    	executeFunction();
+		    }
+		    else{
+		        setTimeout(function(){
+		        	variableWait(executeFunction);
+		        },250);
+		    }
+		}
+		variableWait(function() {
+				gmapsMap.setOptions(mapOptions);
+				google.maps.event.addListener(gmapsMap, 'click', function(event) {
+					geocodeAndFixMap(event.latLng);
+				});
+
+			}
+		);
+		
+		function geocodeAndFixMap(latLng) {
+			geocoder.geocode({'latLng': latLng}, function(results, status) {
+			    if (status == google.maps.GeocoderStatus.OK) {
+			      if (results[0]) {
+						  fixMap(results[0].geometry.location, results[0].formatted_address, results[0].formatted_address);
+			      } else {
+					// alert('No results found');
+			      }
+			    } else {
+			    }
+			});
+		}
+		
+		function populateForm(currentElement) {
+			$('#location>:input:nth-child(1)').val(eventAddress);
+		}
+		
+		function fixMap(geocodedLoc, formattedAddress, infoboxHtml) {
+			
+			  $('#location>:input').val(formattedAddress);
+			  $('#locationLatLng>:input').val(geocodedLoc.lat()+","+geocodedLoc.lng());
+			
+			if(infowindow != null)
+				infowindow.setMap(null);
+
+			infowindow = new google.maps.InfoWindow({
+				map: gmapsMap,
+				position: geocodedLoc,
+			    content: infoboxHtml
+			});
+			
+// 			infowindow.open(gmapsMap, marker);
+			
+// 			gmapsMap.setCenter(geocodedLoc);
+			
+			var bounds = gmapsMap.getBounds();
+			bounds.extend(geocodedLoc);
+
+			gmapsMap.fitBounds(bounds);
+			gmapsMap.panToBounds(bounds);
+// 			gmapsMap.setZoom(15);
+		}
+		</script>
+
+	</ui:define>
+	
+	<ui:define name="footer">
+	</ui:define>
+</ui:composition>
+</html>

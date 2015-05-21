@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<ui:composition template="/template/templateEmpty.xhtml">
+
+	<ui:define name="script">
+		<link href="/css/bootstrap-switch.css" rel="stylesheet"/>
+		<script src="/js/bootstrap-switch.js"></script>
+	</ui:define>
+
+	<ui:define name="title">#{msg['createuTitle']}</ui:define>
+	<ui:define name="content">
+		
+		<h:form styleClass="form-horizontal col-md-offset-1 col-md-10" accept-charset="utf-8">
+			<fieldset>
+
+				<legend>#{msg['createuFormL']}</legend>
+
+				<!-- Language selection-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="password">#{msg['userLanguage']}</label>
+					<div class="col-md-4">
+						<h:selectOneMenu value="#{userForm.user.locale}" onchange="submit()"
+						styleClass="dropdown"
+						valueChangeListener="#{userForm.localeChanged}">
+							<f:selectItems value="#{userForm.countries}" />
+						</h:selectOneMenu>
+						<span class="help-block">#{msg['createuLanguageHelp']}</span>
+					</div>
+				</div>
+	
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="username">#{msg['userUserName']}</label>
+					<div class="col-md-4">
+						<h:inputText id="username" name="username" pt:placeholder="Email"
+							styleClass="form-control input-md" type="text"
+							value="#{userForm.user.email}" pt:required="" pt:type="email"/> 
+							<span class="help-block">#{msg['createuEmailHelp']}</span>
+					</div>
+				</div>
+
+				<!-- Password input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="password">#{msg['userPassword']}</label>
+					<div class="col-md-4">
+						<h:inputText id="password" name="password" pt:placeholder="password"
+							styleClass="form-control input-md" pt:type="password"  pt:required="" 
+							value="#{userForm.user.password}"/> 
+							<span class="help-block">#{msg['createuPasswordHelp']}</span>
+					</div>
+				</div>
+
+				<!-- facebook switch input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="password">#{msg['userFacebookSwitch']}</label>
+					<div class="col-md-4">
+						<h:selectBooleanCheckbox value="#{userForm.user.useFacebook}" type="checkbox" pt:name="my-checkbox"/>
+						<span class="help-block">#{msg['createuFacebookSwitchHelp']}</span>
+					</div>
+				</div>
+				<!-- Start the switch -->
+				<script>$("[name='my-checkbox']").bootstrapSwitch();</script>
+				
+				<h:commandButton type="submit" value="#{msg['createuFormSubmit']}" styleClass="btn btn-primary pull-right" action="#{userForm.submit}"/>
+				
+			</fieldset>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
+</html>

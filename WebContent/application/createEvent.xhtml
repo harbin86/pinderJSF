@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<ui:composition template="../template/template.xhtml">
+	<ui:define name="script">
+		<link href="../css/basic.css" type="text/css" rel="stylesheet" />
+		<link href="../css/dropzone.css" type="text/css" rel="stylesheet" />
+		<script src="../js/dropzone.js"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw6MYzh9A5OP3plRY0BmxxjIrQ7UCMaOQ&amp;sensor=true"></script>
+		<!-- Tags -->
+<!-- 		<link rel="stylesheet" href="../css/bootstrap-tagsinput.css"/> -->
+<!-- 		<script src="../js/angular.min.js"></script> -->
+<!-- 		<script src="../js/bootstrap-tagsinput.js"></script> -->
+<!-- 	    <script src="../js/bootstrap-tagsinput-angular.js"></script> -->
+<!-- 	    Tags, TypeAhead -->
+<!-- 		<script src="../js/typeahead.min.js"></script> -->
+<!-- 		<script src="../js/hogan-2.0.0.js"></script> -->
+	    
+		<script type="text/javascript">
+		
+		var listOfImages = [];
+		
+		// dropzone
+		var breakChar = "";
+		Dropzone.options.imgUpload = {
+		    paramName: "file", // Must match the name of the HttpPostedFileBase argument that the Upload action expects.
+		    dictDefaultMessage: "Drag your image here",
+		    acceptedFiles: "image/*", // Accept images only
+		    maxFilesize: 10, // MB
+		    maxFiles: 11,
+		    uploadMultiple: false,
+		    addRemoveLinks: true,
+		    removedfile: function(file) {
+		        
+		    	// The file hasn't been uploaded, trap and stop ajax
+		    	if (file.status !== "success") { return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0; } 
+		        
+		    	// continue on
+		        var name = file.name;
+		        $.ajax({
+		            type: 'POST',
+		            url: '/dynamic/imageDelete',
+		            data: "file="+name,
+		            dataType: 'html'
+		        });
+			    var _ref;
+
+			    // remove from the image from the list
+			    var listOfImagesLink = $("#imagesLinkHiddenBox input").val().split("[");
+			    alert(listOfImagesLink);
+			    var imagesLinkInput = "";
+			    var sep = "";
+			    for(var x=0; x &lt; listOfImages.length; x++) {
+			    	if(listOfImages[x] === name) {
+			    		
+			    	} else {
+			    		imagesLinkInput += sep + listOfImagesLink[x];
+			    		sep = "[";
+			    	}
+			    }
+			    $("#imagesLinkHiddenBox input").val(imagesLinkInput);
+			    
+			    return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;        
+		    },
+		    acceptedFiles: ".jpeg,.jpg,.png,.gif,.bmp,.JPEG,.JPG,.PNG,.GIF,.BMP",
+		    init: function() {
+		        this.on("success", function(file, response) {
+
+		        	listOfImages.push(file.name);
+		        	var currentVal = $('#imagesLinkHiddenBox input').val();
+		        	$('#imagesLinkHiddenBox input').val(currentVal+breakChar+"/dimage/"+response.dImageId);
+		        	breakChar = "[";
+		        });
+		    }
+		};
+		
+			var geocoder;
+			var map;
+			var marker;
+			var eventAddress;
+			
+			function initialize() {
+			  geocoder = new google.maps.Geocoder();
+			  var latlng = new google.maps.LatLng(1.3000, 103.8000);
+			  var mapOptions = {
+			    zoom: 10,
+			    center: latlng,
+			      disableDefaultUI: true, // a way to quickly hide all controls
+			      mapTypeControl: false,
+			      scaleControl: true,
+			      zoomControl: true,
+			      zoomControlOptions: {
+			        style: google.maps.ZoomControlStyle.MEDIUM 
+			      },
+			      mapTypeId: google.maps.MapTypeId.ROADMAP
+			  }
+			  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+	
+			  google.maps.event.addListener(map, 'click', function(event) {
+				  
+				  geocoder.geocode({'latLng': event.latLng}, function(results, status) {
+					    if (status == google.maps.GeocoderStatus.OK) {
+					      if (results[0]) {
+							  fixMap(results[0].geometry.location, results[0].formatted_address);
+							  $('#addressDiv>:input').val(results[0].formatted_address);
+							  $('#addressLatLngDiv>:input').val(results[0].geometry.location.lat()+","+results[0].geometry.location.lng());
+					      } else {
+							// alert('No results found');
+					      }
+					    } else {
+					    }
+					});
+			  });
+	
+			}
+			google.maps.event.addDomListener(window, 'load', initialize);
+			
+			function populateForm(currentElement) {
+				$('#addressDiv>:input').val(eventAddress);
+			}
+			
+			
+			function codeAddress(elem) {
+			  var address = elem.value;
+			  geocoder.geocode( { 'address': address}, function(results, status) {
+			    if (status == google.maps.GeocoderStatus.OK) {
+			    	  eventAddress = results[0].formatted_address;
+			    	  // Escape by javascript first then html
+			    	  var htmlInfoWin = results[0].formatted_address
+			    	  +"&lt;br\/&gt;&lt;a href=\&quot;javascript:void(0);\&quot; onclick=\&quot;populateForm(this)\&quot;&gt;Use this address&lt;\/a&gt;";
+			    	fixMap(results[0].geometry.location, htmlInfoWin);
+			    	
+			    	$('#addressLatLngDiv>:input').val(results[0].geometry.location.lat()+","+results[0].geometry.location.lng());
+			    	
+			    } else {
+			    }
+			  });
+			}
+			
+			function fixMap(geocodedLoc, formattedAddress) {
+			      if(marker != null)
+			    	  marker.setMap(null);
+			      
+			      marker = new google.maps.Marker({
+			          map: map,
+			          position: geocodedLoc
+			      });
+			      
+		        var infowindow = new google.maps.InfoWindow({
+		            content: formattedAddress
+		        });
+		        
+		        infowindow.open(map, marker);
+			      
+			      var bounds = new google.maps.LatLngBounds();
+			      bounds.extend(geocodedLoc);
+	
+			      map.fitBounds(bounds);
+			      map.panToBounds(bounds);
+			      map.setZoom(15);
+			}
+
+		</script>
+	</ui:define>
+	
+	
+	<ui:define name="title">#{msg['createeTitle']}</ui:define>
+	<ui:define name="content">
+
+		<h:panelGrid  id="createEventForm" styleClass="col-sm-12 col-md-12 main">
+		
+			<div class="col-md-12">
+<!-- 			col-md-offset-1 col-md-10 -->
+
+			<!-- Form Name -->
+<!-- 			<legend>#{msg['createeFormL']}</legend> -->
+		
+			<!-- Image upload handler -->
+			<label>Pictures</label>
+			<div>Images for your Pinvent</div>
+			<form action="/dynamic/imageUpload" class="dropzone" id="imgUpload">
+			</form>
+		
+			<h:form styleClass="form-horizontal col-md-12" accept-charset="utf-8">
+				<fieldset>
+
+				<div id="imagesLinkHiddenBox" class=""><!-- hidden -->
+					<h:inputText id="imagesLink" 
+						name="imagesLink"
+						label="#{msg['createeFormName']}"
+						type="text" value="#{eventForm.imageLinks}" >
+					</h:inputText>
+				</div>
+					
+					<h:messages styleClass="list-group" errorClass="list-group-item list-group-item-danger"/>
+
+					<!-- Text input-->
+					<div class="form-group black-bar-date">
+						<label class="col-md-1 control-label" for="date">#{msg['createeFormDateTime']}</label>
+						<div class="col-md-9"> 
+							<label class="col-md-1 control-label" for="date">#{msg['createeFormDateTimeFrom']}</label>
+							<div class='col-md-5'>
+								<div class='input-group date' id='datetimepicker0'>
+									<h:inputText type='text' 
+										label="#{msg['createeFormDateTime']}" 
+										pt:required="true" 
+										required="true" 
+										pt:placeholder="#{msg['createeFormDateTimePlaceholder']}"
+										styleClass="form-control"
+										value="#{eventForm.event.startDate}" >
+										<f:convertDateTime pattern="MM/dd/yyyy hh:mm aaa" type="both" timeZone="Asia/Singapore"/>
+									</h:inputText> 
+									<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+								</div>
+							</div>
+							<label class="col-md-1 control-label" for="date">#{msg['createeFormDateTimeTo']}</label>
+							<div class='col-md-5'>
+								<div class='input-group date' id='datetimepicker1'>
+									<h:inputText type='text'
+										label="#{msg['createeFormDateTime']}" 
+										pt:required="true" 
+										required="true" 
+										pt:placeholder="#{msg['createeFormDateTimePlaceholder']}"
+										styleClass="form-control"
+										value="#{eventForm.event.endDate}" > 
+										<f:convertDateTime pattern="MM/dd/yyyy hh:mm aaa" type="both" timeZone="Asia/Singapore"/>
+									</h:inputText>
+									<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span> </span>
+								</div>
+							</div>
+<!-- 							<span class="help-block">#{msg['createeFormDateTimeHelp']}</span> -->
+						</div>
+					</div>
+				    <script type="text/javascript">
+				        $(function () {
+				            $('#datetimepicker0').datetimepicker({
+				            	minDate:new Date(),
+				            	sideBySide: true
+				            });
+				            $('#datetimepicker1').datetimepicker({
+				            	sideBySide: true
+				            });
+				            $("#datetimepicker0").on("dp.change",function (e) {
+				               $('#datetimepicker1').data("DateTimePicker").setMinDate(e.date);
+				            });
+				            $("#datetimepicker1").on("dp.change",function (e) {
+				               $('#datetimepicker0').data("DateTimePicker").setMaxDate(e.date);
+				            });
+				        });
+				    </script>
+				    
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="name">#{msg['createeFormName']}</label>
+						<div class="col-md-9">
+							<h:inputText id="name" 
+								name="name"
+								label="#{msg['createeFormName']}"
+								styleClass="form-control input-md"
+								required="true"
+								pt:required="true"
+								pt:pattern="[^\\w\\s].{5,50}"
+								pt:placeholder="#{msg['createeFormNameHelp']} #{msg['createeFormNamePlaceholder']}"
+								type="text" value="#{eventForm.event.name}" >
+								<f:validateLength minimum="10" maximum="50" />
+							</h:inputText>
+<!-- 							<span class="help-block">#{msg['createeFormNameHelp']}</span> -->
+						</div>
+					</div>
+
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="details"><img src="/image/icons/png/icon_eventdescription.png"/><!--#{msg['createeFormDetails']}--></label>
+						<div class="col-md-9">
+							<h:inputTextarea id="details" 
+								style="overflow:auto;resize:none"
+								name="details"
+								label="#{msg['createeFormDetails']}"
+								styleClass="form-control input-md" 
+								pt:required="true" 
+								required="true" 
+								pt:placeholder="#{msg['createeFormDetailsHelp']}. #{msg['createeFormDetailsPlaceholder']}"
+								type="text" value="#{eventForm.event.description}"
+								rows="7" >
+<!-- custom validator -->
+								<f:validateLength minimum="19" maximum="500" />
+							</h:inputTextarea>
+<!-- 							<span class="help-block">#{msg['createeFormDetailsHelp']}</span> -->
+						</div>
+					</div>
+
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="address"><img src="/image/icons/png/icon_location.png"/><!--#{msg['createeFormAddress']}--></label>
+						<div id="addressDiv" class="col-md-9">
+							<h:inputText id="address"
+								name="address"
+								label="#{msg['createeFormAddress']}"
+								pt:required="true" 
+								required="true" 
+								pt:placeholder="#{msg['createeFormAddressHelp']}. #{msg['createeFormAddressPlaceholder']}"
+								styleClass="form-control input-md"
+								value="#{eventForm.event.eventLocation}" 
+								type="text">
+							</h:inputText>
+<!-- Use Google Map's native API, it is more responsive -->
+<!-- 							<h:panelGrid id="createeFormPanel" styleClass="col-md-12 col-sm-12"> -->
+<!-- 								<m:map partiallyTriggered="true" width="100%" height="150px" address="#{eventForm.event.eventLocation}"> -->
+<!-- 									<m:marker/> -->
+<!-- 									<m:eventListener eventName="moveend" jsFunction="mapMoveEndHandler"/> -->
+<!-- 								</m:map> -->
+<!-- 							</h:panelGrid> -->
+							<div id="map-canvas" class="col-md-12 col-sm-12"></div>
+<!-- 							<span class="help-block">#{msg['createeFormAddressHelp']}</span> -->
+						</div>
+					</div>
+					<script>
+					$('#addressDiv>:input').on('keyup', function() {
+						var inputElement = this;
+					    if (this.value.length > 1) {
+					        delay(function(){
+					        	codeAddress(inputElement);
+					        }, 1000 );
+					    }
+					});
+					var delay = (function(){
+						  var timer = 0;
+						  return function(callback, ms){
+						    clearTimeout (timer);
+						    timer = setTimeout(callback, ms);
+						  };
+					})();
+					</script>
+					
+					<!-- Text input-->
+					<div class="form-group hide">
+						<div id="addressLatLngDiv" class="col-md-9">
+							<h:inputText id="addressLatLng"
+								name="addressLatLng"
+								pt:required="true" 
+								required="true"
+								styleClass="form-control input-md"
+								value="#{eventForm.event.eventLocationLatLng}" 
+								type="text">
+							</h:inputText>
+						</div>
+					</div>
+				    		
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="cost">#{msg['createeFormCustomUrl']}</label>
+						<div class="col-md-9">
+							<div class="input-group">
+								<span class="input-group-addon">http://www.pinder.com/event/</span>
+								<h:inputText id="customUrl"
+									name="customUrl"
+									pt:required="true" 
+									required="true" 
+									label="#{msg['createeFormCustomUrl']}"
+									pt:placeholder="#{msg['createeFormCustomUrlHelp']}. #{msg['createeFormCustomUrlPlaceholder']}"
+									styleClass="form-control"
+									value="#{eventForm.event.eventTextId}" 
+									type="text">
+								</h:inputText>
+							</div>
+<!-- 							<span class="help-block">#{msg['createeFormCustomUrlHelp']}</span> -->
+						</div>
+					</div>
+					
+  					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="cost"><img src="/image/icons/png/icon_eventprice.png" width="40px" height="40px"/><!--#{msg['createeFormCost']}--></label>
+						<div class="col-md-9">
+							<div class="input-group">
+								<span class="input-group-addon">SGD</span>
+								<h:inputText id="cost"
+									name="cost"
+									label="#{msg['createeFormCost']}"
+									pt:placeholder="#{msg['createeFormCostHelp']}. #{msg['createeFormCostPlaceholder']}"
+									styleClass="form-control"
+									value="#{eventForm.event.cost}" 
+									type="text">
+								</h:inputText>
+							</div>
+<!-- 							<span class="help-block">#{msg['createeFormCostHelp']}</span> -->
+						</div>
+					</div>
+					
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="tags"><img src="/image/icons/png/icon_categories.png" width="40px" height="40px"/><!--#{msg['createeFormTags']}--></label>
+						<div class="col-md-9">
+<!-- Fix Glowing border, Style Problems and Predictive -->
+							<h:selectOneMenu id="tags"
+								name="tags"
+								label="#{msg['createeFormTags']}"
+								pt:placeholder="#{msg['createeFormTagsHelp']}. #{msg['createeFormTagsPlaceholder']}"
+								pt:required="true" 
+								required="true" 
+								pt:data-role="tagsinput" 
+								styleClass="form-control"
+								value="#{eventForm.event.category}" 
+								type="text">
+								<f:selectItems value="#{eventForm.tagsValue}" />
+							</h:selectOneMenu>
+							<span class="help-block">#{msg['createeFormTagsHelp']}</span>
+						</div>
+					</div>
+
+					<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-1 control-label" for="url"><img src="/image/icons/png/icon_link.png"/><!--#{msg['createeFormUrl']}--></label>
+						<div class="col-md-9">
+							<div class="input-group">
+								<span class="input-group-addon">http://</span>
+								<h:inputText id="url"
+									name="url"
+									label="#{msg['createeFormUrl']}"
+									pt:placeholder="#{msg['createeFormUrlHelp']}. #{msg['createeFormUrlPlaceholder']}"
+									styleClass="form-control"
+									value="#{eventForm.event.url}" 
+									type="text">
+								</h:inputText>
+							</div>
+<!-- 							<span class="help-block">#{msg['createeFormUrlHelp']}</span> -->
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<h:commandButton type="submit" value="#{msg['createeFormSubmit']}" styleClass="btn btn-primary pull-right" action="#{eventForm.submit}"/>
+					</div>
+					
+				</fieldset>
+		</h:form>
+		
+		</div>
+		
+		</h:panelGrid >
+	</ui:define>
+</ui:composition>
+</html>

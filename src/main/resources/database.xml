@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<database>
+
+	<name>pinder</name>
+	
+	<package>sg.com.pinder.pojo</package>
+	
+	<mode>
+		<e2empire>true</e2empire>
+	</mode>
+	
+	<credentials>
+		<credential>
+			<database>admin</database>
+			<username>Eric_Vader</username>
+			<password>wpzyM0Z05OZ5GNQ5Ox5QpA==</password>
+		</credential>
+	</credentials>
+	
+<!-- 	<local> -->
+<!-- 		<server>Local</server> -->
+<!-- 		<ipaddress>localhost</ipaddress> -->
+<!-- 		<port>27017</port> -->
+<!-- 	</local> -->
+
+<!-- 	<e2empire> -->
+<!-- 		<server>Local</server> -->
+<!-- 		<ipaddress>192.168.1.100</ipaddress> -->
+<!-- 		<port>27017</port> -->
+<!-- 	</e2empire> -->
+
+	<e2empire>
+		<server>EC2</server>
+		<ipaddress>pinder.sg</ipaddress>
+		<port>27017</port>
+	</e2empire>
+
+<!-- 	<mongoconfig> -->
+<!-- 		<acceptableLatencyDifference></acceptableLatencyDifference> -->
+<!-- 		<alwaysUseMBeans></alwaysUseMBeans> -->
+<!-- 		<autoConnectRetry>true</autoConnectRetry> -->
+<!-- 		<connectionsPerHost>50</connectionsPerHost> -->
+<!-- 		<connectTimeout>15</connectTimeout> -->
+<!-- 		<cursorFinalizerEnabled></cursorFinalizerEnabled> -->
+<!-- 		<heartbeatConnectRetryFrequency></heartbeatConnectRetryFrequency> -->
+<!-- 		<heartbeatConnectTimeout></heartbeatConnectTimeout> -->
+<!-- 		<heartbeatFrequency></heartbeatFrequency> -->
+<!-- 		<heartbeatSocketTimeout></heartbeatSocketTimeout> -->
+<!-- 		<heartbeatThreadCount></heartbeatThreadCount> -->
+<!-- 		<maxConnectionIdleTime></maxConnectionIdleTime> -->
+<!-- 		<maxConnectionLifeTime></maxConnectionLifeTime> -->
+<!-- 		<maxWaitTime></maxWaitTime> -->
+<!-- 		<minConnectionsPerHost></minConnectionsPerHost> -->
+<!-- 	<readPreference></readPreference> -->
+<!-- 		<requiredReplicaSetName></requiredReplicaSetName> -->
+<!-- 		<threadsAllowedToBlockForConnectionMultiplier>1500</threadsAllowedToBlockForConnectionMultiplier> -->
+<!-- 		<socketTimeout>60000</socketTimeout> -->
+<!-- 	<writeConcern></writeConcern> -->
+<!-- 	</mongoconfig> -->
+
+<!-- 
+	<orion replicaset='true'>
+		<primary>
+			<server>Orion 1(Primary)</server>
+			<ipaddress>10.217.168.72</ipaddress>
+			<port>27017</port>
+		</primary>
+		<secondaries>
+			<secondary>
+				<server>Orion 2(Secondary)</server>
+				<ipaddress>10.217.168.73</ipaddress>
+				<port>27017</port>
+			</secondary>
+		</secondaries>
+		<arbiter>
+			<server>140</server>
+			<ipaddress>10.217.168.140</ipaddress>
+			<port>27017</port>
+		</arbiter>
+	</orion>
+ -->
+</database>

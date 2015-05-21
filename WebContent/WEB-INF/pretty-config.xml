@@ -1,0 +1,38 @@
+<!-- <pretty-config xmlns="http://ocpsoft.org/schema/rewrite-config-prettyfaces"  -->
+<!--   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  -->
+<!--   xsi:schemaLocation="http://ocpsoft.org/schema/rewrite-config-prettyfaces -->
+<!--                       http://ocpsoft.org/xml/ns/prettyfaces/rewrite-config-prettyfaces.xsd"> -->
+<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.3.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.4.1
+http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.4.1.xsd">
+	<!-- Specific Url for Event and User -->
+	<url-mapping id="event">
+		<pattern value="/event/#{eventTextId}" />
+		<view-id value="/application/event.xhtml" />
+	</url-mapping>
+	<url-mapping id="myPinventDetails">
+		<pattern value="/myPinventDetails/#{eventTextId}" />
+		<view-id value="/application/myPinvent-details.xhtml" />
+	</url-mapping>
+	<url-mapping>
+		<pattern value="/user/#{userTextId}" />
+		<view-id value="/application/user.xhtml" />
+	</url-mapping>
+	
+	<url-mapping>
+		<pattern value="/dimage/#{file}" />
+		<view-id value="/dynamic/image" />
+	</url-mapping>
+
+	<url-mapping id="myPinvents">
+		<pattern value="/myPinvents" />
+		<view-id value="/myPinvents.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="searchResults">
+		<pattern value="/searchResults" />
+		<view-id value="/searchResults.xhtml" />
+	</url-mapping>
+
+</pretty-config>

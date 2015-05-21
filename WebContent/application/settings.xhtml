@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<ui:composition template="../template/template.xhtml">
+	<f:metadata>
+<!-- 		<f:viewParam name="email" value="#{query.email}" /> -->
+		<f:viewAction action="#{query.queryDatabaseProfileId}"/>
+		<!-- <f:viewAction action="#{userForm.queryDatabaseProfileId}"/> -->
+	</f:metadata>
+	
+	<ui:define name="title">Profile Settings</ui:define>
+	<ui:define name="content">
+		<h:form styleClass="form-horizontal col-md-offset-1 col-md-10" accept-charset="utf-8">
+			<fieldset>
+
+				<legend>#{msg['createuFormL']}</legend>
+
+				<!-- Language selection-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="password">#{msg['userLanguage']}</label>
+					<div class="col-md-4">
+						<h:selectOneMenu value="#{userForm.user.locale}" onchange="submit()"
+						styleClass="dropdown"
+						valueChangeListener="#{userForm.localeChanged}">
+							<f:selectItems value="#{userForm.countries}" />
+						</h:selectOneMenu>
+						<span class="help-block">#{msg['createuLanguageHelp']}</span>
+					</div>
+				</div>
+	
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="username">#{msg['userUserName']}</label>
+					<div class="col-md-4">
+						<h:inputText id="username" name="username" binding="#{username}" pt:placeholder="Email"
+							styleClass="form-control input-md" type="text"
+							value="#{query.userProfile.email}" pt:required="" pt:type="email"/> 
+<!-- 							 #{userForm.user.email}-->
+					</div>
+				</div>
+
+				<!-- Password input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="password">#{msg['userPassword']}</label>
+					<div class="col-md-4">
+						<h:inputText id="password" name="password" binding="#{password}" pt:placeholder="password"
+							styleClass="form-control input-md" pt:type="password"  pt:required="" 
+							value="#{userForm.newPassword}"/>
+					</div>
+				</div>
+				
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="firstName">#{msg['userFirstName']}</label>
+					<div class="col-md-4">
+						<h:inputText id="firstName" name="firstName" binding="#{firstName}" pt:placeholder="First Name"
+							styleClass="form-control input-md" type="text"
+							value="#{query.userProfile.firstName}" pt:required="" pt:type="firstName"/> 
+<!-- 							 #{userForm.userP.firstName}-->
+					</div>
+				</div>
+				
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="lastName">#{msg['userLastName']}</label>
+					<div class="col-md-4">
+						<h:inputText id="lastName" name="lastName" binding="#{lastName}" pt:placeholder="Last Name"
+							styleClass="form-control input-md" type="text"
+							value="#{query.userProfile.lastName}" pt:required="" pt:type="lastName"/> 
+<!-- 							 #{userForm.userP.lastName}-->
+					</div>
+				</div>
+				
+				<!-- Gender selection-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="gender">#{msg['userGender']}</label>
+					<div class="col-md-4">
+						<h:selectOneMenu value="#{query.userProfile.gender}"
+						binding="#{gender}"
+						styleClass="dropdown"
+						valueChangeListener="#{userForm.genderChanged}">
+							<f:selectItems value="#{userForm.gender}" />
+						</h:selectOneMenu>
+<!-- 						 #{userForm.userP.gender}-->
+					</div>
+				</div>
+				
+				<!-- Text input-->
+					<div class="form-group">
+						<label class="col-md-4 control-label" for="date">#{msg['userBirthday']}</label>
+						<div class="col-md-4"> 
+								<div class='input-group date' id='datetimepicker1'>
+									<h:inputText type='text'
+										label="#{msg['createuFormBirthday']}"
+										binding="#{birthday}" 
+										pt:required="true" 
+										required="true" 
+										pt:placeholder="#{msg['createuFormBirthdayPlaceholder']}"
+										styleClass="form-control"
+										value="#{query.userProfile.birthday}" > 
+										<f:convertDateTime pattern="dd/MM/yyyy"/>
+									</h:inputText>
+									<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span> </span>
+								</div>
+<!-- 							 #{userForm.userP.birthday}-->
+						</div>
+					</div>
+				    <script type="text/javascript">
+				        $(function () {
+				            $('#datetimepicker1').datetimepicker({
+				            	maxDate:new Date(),
+				            	pickTime: false,
+				            	format: 'DD/MM/YYYY'
+				            //	sideBySide: false
+				            });
+				        });
+				    </script>
+
+				<!-- facebook switch input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="password">#{msg['userFacebookSwitch']}</label>
+					<div class="col-md-4">
+						<h:selectBooleanCheckbox value="#{userForm.user.useFacebook}" type="checkbox" pt:name="my-checkbox"/>
+						<span class="help-block">#{msg['createuFacebookSwitchHelp']}</span>
+					</div>
+				</div>
+				<!-- Start the switch -->
+				<script>$("[name='my-checkbox']").bootstrapSwitch();</script>
+				<h:commandButton type="submit" value="Update" styleClass="btn btn-primary" action="#{userForm.update(username.value, password.value, firstName.value, lastName.value, gender.value, birthday.value)}"/>
+				<h:commandButton type="submit" value="Delete" styleClass="btn btn-primary" action="#{userForm.delete}"/>
+				
+			</fieldset>
+		</h:form>
+<!-- #{userForm.user.email} -->
+<!-- #{userForm.user.password} -->
+<!-- #{query.userProfile.firstName} -->
+<!-- #{query.userProfile.lastName} -->
+<!-- #{query.userProfile.gender} -->
+<!-- #{query.userProfile.birthday} -->
+
+	</ui:define>
+</ui:composition>
+</html>

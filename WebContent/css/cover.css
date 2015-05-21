@@ -1,0 +1,333 @@
+/*
+ * Globals
+ */
+
+/* Links */
+a,
+a:focus,
+a:hover {
+  color: #fff;
+}
+
+/* Custom default button */
+.btn-default,
+.btn-default:hover,
+.btn-default:focus {
+  color: #333;
+  text-shadow: none; /* Prevent inheritence from `body` */
+  background-color: #fff;
+  border: 1px solid #fff;
+}
+
+.footer {
+	height: 200px;
+}
+.white-bar-footer {
+	height: 160px;
+	padding: 10px;
+}
+.footer-brand {
+	display:block;
+    margin:auto;
+}
+.black-bar-footer {
+	background: #333333;
+	height: 40px;
+	color: white;
+	padding: 10px;
+	text-align: center;
+}
+.black-bar-comments {
+	background: #333333;
+	height: auto;
+	color: white;
+	padding: 10px;
+	text-align: left;
+}
+.center {
+	text-align: center;
+}
+.panelContainer {
+	padding-top: 10px;
+}
+
+.panels {
+	width: 25em;
+	height: auto;
+}
+
+.pinder_msg {
+	text-align: left;
+	padding: 20px;
+}
+.msg_small {
+	font-size:20px;
+}
+/*
+ * Base structure
+ */
+.unselectable {
+	-moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+
+    /*
+    Introduced in IE 10.
+    See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+    */
+    -ms-user-select: none;
+    user-select: none;
+}
+
+html,
+body {
+  height: 100%;
+/*  background-color: #333; */
+/*   background-image: url('/image/background/background0.jpg'); */
+}
+body {
+/*   color: #fff; */
+  text-align: center;
+/*   text-shadow: 0 1px 3px rgba(0,0,0,.5); */
+/*   -webkit-box-shadow: inset 0 0 100px rgba(0,0,0,.5); */
+/*           box-shadow: inset 0 0 100px rgba(0,0,0,.5); */
+}
+
+/* Extra markup and styles for table-esque vertical and horizontal centering */
+.site-wrapper {
+  display: table;
+  width: 100%;
+  height: 100%; /* For at least Firefox */
+  min-height: 100%;
+}
+.site-wrapper-inner {
+  display: table-cell;
+  vertical-align: top;
+}
+.cover-container {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Padding for spacing */
+.inner {
+  padding: 30px;
+}
+
+
+/*
+ * Header
+ */
+.masthead-brand {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.masthead-nav > li {
+  display: inline-block;
+}
+.masthead-nav > li + li {
+  margin-left: 20px;
+}
+.masthead-nav > li > a {
+  padding-right: 0;
+  padding-left: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff; /* IE8 proofing */
+  color: rgba(255,255,255,.75);
+  border-bottom: 2px solid transparent;
+}
+.masthead-nav > li > a:hover,
+.masthead-nav > li > a:focus {
+  background-color: transparent;
+  border-bottom-color: #a9a9a9;
+  border-bottom-color: rgba(255,255,255,.25);
+}
+.masthead-nav > .active > a,
+.masthead-nav > .active > a:hover,
+.masthead-nav > .active > a:focus {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+/*
+ * Sign-in box
+ */
+.loginbox {
+  background-color: rgba(245, 245, 245, 0.3);
+-moz-border-radius: 10px;
+-webkit-border-radius: 10px;
+border-radius: 10px;
+border: 0px solid #eee;
+position:absolute;
+    top: 50%;
+    left: 50%;
+    width:24em;
+    height:30em;
+    margin-top: -15em; /*-ve of this and the profileName's margin top must add up to 21*/
+    margin-left: -12em; /*1/2 of your width to be centered*/
+}
+
+.profile-image{
+    
+
+}
+
+.button_blue {
+	width: 300px;
+	height: 45px;
+	display: inline-block;
+	background: url('/image/loginWithFacebook2.png');
+    margin-top:15px;
+    margin-bottom:10px;
+    margin-left:15px;
+    margin-right:15px;
+}
+.button_blue:hover {
+	background: url('/image/loginWithFacebook2.png');
+    opacity:1.5; 
+    filter:alpha(opacity=90);        
+}
+.border-row {
+    border-bottom: 1px solid #ccc;
+}
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+@media (min-width: 768px) {
+  .masthead-brand {
+    float: left;
+  }
+  .masthead-nav {
+    float: right;
+  }
+}
+
+
+/*
+ * Cover
+ */
+
+.cover {
+  padding: 0 20px;
+}
+.cover .btn-lg {
+  padding: 10px 20px;
+  font-weight: bold;
+}
+
+
+/*
+ * Footer
+ */
+
+.mastfoot {
+  color: #999; /* IE8 proofing */
+  color: rgba(255,255,255,.5);
+}
+
+
+/*
+ * Affix and center
+ */
+
+@media (min-width: 768px) {
+  /* Pull out the header and footer */
+  .masthead {
+    position: fixed;
+    top: 0;
+  }
+  .mastfoot {
+    position: fixed;
+    bottom: 0;
+  }
+  /* Start the vertical centering */
+  .site-wrapper-inner {
+    vertical-align: middle;
+  }
+  /* Handle the widths */
+  .masthead,
+  .mastfoot,
+  .cover-container {
+    width: 100%; /* Must be percentage or pixels for horizontal alignment */
+  }
+}
+
+@media (min-width: 992px) {
+  .masthead,
+  .mastfoot,
+  .cover-container {
+    width: 100%;
+  }
+}
+
+/* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+
+/* Carousel base class */
+.carousel {
+height:100%;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+  z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel .item {
+height:100%;
+  background: black;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.carousel-inner > .item > img {
+	  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 500px;
+  width: 100%;
+}
+.carousel-indicators {
+	z-index:0;
+}
+.active{
+	height:100%;
+}
+.carousel-inner{
+	height:100%;
+}
+/*---*/

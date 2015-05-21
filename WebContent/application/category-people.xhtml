@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/">
+
+<ui:composition template="../template/template.xhtml">
+
+	<f:metadata>
+		<f:viewAction action="#{query.queryUserAll}"/>
+	</f:metadata>
+
+	<ui:define name="title">Pinder: Category-Event</ui:define>
+	<ui:define name="content">
+		<div class="col-sm-3 col-md-2 sidebar">
+			<ul class="nav nav-sidebar">
+				<li class="active"><a href="#">#{msg['catNavPeople']}</a></li>
+				<li><a href="category-event.xhtml">#{msg['catNavEvent']}</a></li>
+				<li><a href="category-promotion.xhtml">#{msg['catNavPromotion']}</a></li>
+			</ul>
+		</div>
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<div class="page-header">
+				<h3>People</h3>
+			</div>
+			<ui:repeat value="#{query.queryResultUserRecord}" var="eaUser">
+				<div class="thumbnail">
+					<div class="row">
+						<div class="col-sm-2 col-md-2">
+							<img class="img-responsive img-circle" src="http://placehold.it/300x300"/>
+						</div>
+						
+					     <div class="col-sm-10 col-md-10">
+							<div>
+								<h4>#{eaUser.email}</h4>
+								#{eaUser.firstName}
+								#{eaUser.lastName}
+								#{eaUser.gender}
+								#{eaUser.birthday}
+<!-- 								<h5>#{eaEvent.description}</h5> -->
+							</div>
+							<div>
+								Currently hosting: <a href="#">Blah Blah Event</a>
+							</div>
+							<div>
+								Events <span class="badge">200</span> 
+								Likes <span class="badge">2</span>
+							</div>
+						</div>
+					     
+					</div>
+				</div>
+			</ui:repeat>
+		</div>
+	</ui:define>
+</ui:composition>
+</html>

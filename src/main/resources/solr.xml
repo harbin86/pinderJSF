@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<solr>
+	<server>Local</server>
+	<ipaddress>localhost</ipaddress>
+	<port>8983</port>
+	<collection>pinder</collection>
+</solr>
+
+<!-- <solr> -->
+<!-- 	<server>Local</server> -->
+<!-- 	<ipaddress>192.168.1.15</ipaddress> -->
+<!-- 	<port>8983</port> -->
+<!-- 	<collection>pinder</collection> -->
+<!-- </solr> -->

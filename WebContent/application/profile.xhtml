@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:m="http://code.google.com/p/gmaps4jsf/">
+
+<ui:composition template="../template/template.xhtml">
+	<f:metadata>
+		<f:viewParam name="email" value="#{query.email}" />
+		<f:viewAction action="#{query.queryDatabaseProfileId}"/>
+	</f:metadata>
+	
+	<ui:define name="title">Pinder: Profile</ui:define>
+	
+	<ui:define name="content">
+		<!-- Carousel================================================== -->
+	    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    
+	      <!-- Indicators -->
+	      <ol class="carousel-indicators">
+	        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+	        <li data-target="#myCarousel" data-slide-to="1"></li>
+	        <li data-target="#myCarousel" data-slide-to="2"></li>
+	      </ol>
+	      <div class="carousel-inner">
+	        <div class="item active" style="background-image: url('/image/carouselpic1.jpg');">
+	        </div>
+	        <div class="item" style="background-image: url('/image/carouselpic2.jpg');">
+	        </div>
+	        <div class="item" style="background-image: url('/image/carouselpic3.jpg');">
+	        </div>
+	      </div>
+
+	      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+	      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+	      
+	    </div><!-- /.carousel -->
+	    
+		<div class="profile-image" style="background-image: url('/image/face.jpg');"></div>
+		<div class="profile-name">
+			<span style="font-size:20px; color:#ffffff"><b>#{query.userProfile.firstName} #{query.userProfile.lastName}</b></span>
+		</div>
+		
+		<div class="black-bar-top  col-sm-2 col-md-2">
+			<div class="bar-text">
+				<i class="glyphicon glyphicon-home white"></i> 
+				<span>#{query.userProfile.gender} <!--Lives in West, Singapore--></span>
+			</div>
+		</div>
+		
+		<div class="black-bar-top attended col-sm-2 col-md-2">
+			<div class="bar-text center-text">
+				<i class="glyphicon"></i>
+				<span>0 Attended</span>
+			</div>
+		</div>
+		<div class="black-bar-top hosted col-sm-2 col-md-2">
+			<div class="bar-text center-text">
+				<i class="glyphicon"></i>
+				<span>0 Hosted</span>
+			</div>
+		</div>
+				
+    	<div class="black-bar-top facebook col-sm-2 col-md-2">
+    		<div class="bar-text center-text">
+				<i class="glyphicon glyphicon-thumbs-up white"></i>
+				<span>Facebook</span>
+			</div>
+		</div>
+		<div class="black-bar-top twitter col-sm-2 col-md-2">
+			<div class="bar-text center-text">
+				<i class="glyphicon glyphicon-home white"></i>
+				<span>Twitter</span>
+			</div>
+		</div>
+		<div class="black-bar-top likes col-sm-2 col-md-2">
+			<div class="bar-text center-text">
+				<i class="glyphicon glyphicon-heart white"></i>
+				<span>33 likes</span>
+			</div>
+		</div>
+		
+		<!-- Tab controls -->
+		<div class="col-sm-12 col-md-12">
+			<ul class="nav nav-pills">
+				<li class="active"><a data-toggle="tab" href="#timelineTab">Timeline</a></li>
+				<li><a data-toggle="tab" href="#feedTab">Feed</a></li>
+				<li><a data-toggle="tab" href="#profileTab">Profile</a></li>
+				<li><a data-toggle="tab" href="#profileTab">Following</a></li>
+				<li><a data-toggle="tab" href="#profileTab">Followers</a></li>
+			</ul>
+		</div>
+		
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div class="tab-pane active" id="timelineTab">
+				<div class="container">
+					<div class="page-header">
+						<center>
+							<h1 id="timeline">Timeline</h1>
+							<p>Paragraph of text</p>
+						</center>
+					</div>
+					<ul class="timeline col-md-12">
+						<li>
+							<div class="timeline-badge info"><i class="glyphicon glyphicon-hand-left"></i></div>
+							<div class="timeline-panel">
+								<div class="timeline-heading">
+									<h4 class="timeline-title">Bootstrap released</h4>
+									<p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> August 2011</small></p>
+								</div>
+								<div class="timeline-body">
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate. 
+										Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis 
+										dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan. 
+										Aliquam in felis sit amet augue.
+									</p>
+								</div>
+							</div>
+						</li>
+						<li class="timeline-inverted">
+							<div class="timeline-badge warning"><i class="glyphicon glyphicon-chevron-right"></i></div>
+							<div class="timeline-panel">
+								<div class="timeline-heading">
+									<h4 class="timeline-title">Bootstrap 2</h4>
+								</div>
+								<div class="timeline-body">
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate. 
+										Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis 
+										dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan. 
+										Aliquam in felis sit amet augue.
+									</p>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="timeline-badge danger"><i class="glyphicon glyphicon-eye-open"></i></div>
+							<div class="timeline-panel">
+								<div class="timeline-heading">
+									<h4 class="timeline-title">Left Event</h4>
+									<p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> 3 years ago</small></p>
+								</div>
+								<div class="timeline-body">
+									<p>Add more progress events and milestones to the left or right side of the timeline. Each event can be tagged with a date and given a beautiful icon to symbolize it's spectacular meaning.</p>
+								</div>
+							</div>
+						</li>
+						<li class="timeline-inverted">
+							<div class="timeline-badge default"><i class="glyphicon glyphicon-home"></i></div>
+							<div class="timeline-panel">
+								<div class="timeline-heading">
+									<h4 class="timeline-title">Right Event</h4>
+								</div>
+								<div class="timeline-body">
+									<p>Add more progress events and milestones to the left or right side of the timeline. Each event can be tagged with a date and given a beautiful icon to symbolize it's spectacular meaning.</p>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="timeline-badge default"><i class="glyphicon glyphicon-home"></i></div>
+							<div class="timeline-panel">
+								<div class="timeline-heading">
+									<h4 class="timeline-title">Left Event</h4>
+								</div>
+								<div class="timeline-body">
+									<p>Add more progress events and milestones to the left or right side of the timeline. Each event can be tagged with a date and given a beautiful icon to symbolize it's spectacular meaning.</p>
+									<hr/>
+									<div class="btn-group">
+										<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+										<i class="glyphicon glyphicon-cog"></i> <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" role="menu">
+											<li><a href="#">Action</a></li>
+											<li><a href="#">Another action</a></li>
+											<li><a href="#">Something else here</a></li>
+											<li class="divider"></li>
+											<li><a href="#">Separated link</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="timeline-badge default"><i class="glyphicon glyphicon-arrow-left"></i></div>
+							<div class="timeline-panel">
+								<div class="timeline-heading">
+									<h4 class="timeline-title">Left Event</h4>
+								</div>
+								<div class="timeline-body">
+									<p>Add more progress events and milestones to the left or right side of the timeline. Each event can be tagged with a date and given a beautiful icon to symbolize it's spectacular meaning.</p>
+								</div>
+							</div>
+						</li>
+						<li class="timeline-inverted">
+							<div class="timeline-badge success"><i class="glyphicon glyphicon-thumbs-up"></i></div>
+							<div class="timeline-panel">
+								<div class="timeline-heading">
+									<h4 class="timeline-title">Oldest event</h4>
+								</div>
+								<div class="timeline-body">
+									<p>Add more progress events and milestones to the left or right side of the timeline. Each event can be tagged with a date and given a beautiful icon to symbolize it's spectacular meaning.</p>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="tab-pane" id="feedTab">
+				<div class="col-md-12">Tab 2</div>
+			</div>
+			<div class="tab-pane" id="profileTab">
+				<div class="col-md-12">Tab 3</div>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>
+</html>
